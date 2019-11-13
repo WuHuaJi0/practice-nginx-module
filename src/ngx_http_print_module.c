@@ -14,7 +14,7 @@ static ngx_http_module_t ngx_http_print_module_ctx = {
         NULL,/* postconfiguration */
         NULL,/* create main configuration */
         NULL,/* init main configuration */
-        NULL,/* create server configuration */
+        NULL,
         NULL,/* merge server configuration */
         ngx_create_loc_conf,
         ngx_merge_loc_conf,
@@ -36,8 +36,10 @@ static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
     ngx_http_print_loc_conf_t *prev = parent;
     ngx_http_print_loc_conf_t *conf = child;
 
-    printf("prev %s\n conf %s \n", prev->print.data, conf->print.data);
-    ngx_conf_merge_str_value(conf->print, prev->print, "default value");
+    if( prev->print.data != NULL ){
+        conf->print.len = prev->print.len;
+        conf->print.data = prev->print.data;
+    }
     return NGX_CONF_OK;
 }
 
@@ -45,7 +47,7 @@ static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
 static ngx_command_t ngx_http_print_commands[] = {
         {
                 ngx_string("print"),
-                 NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+                NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
                 ngx_http_print,
                 NGX_HTTP_LOC_CONF_OFFSET,
                 0,
@@ -105,14 +107,9 @@ static ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 
 //set 函数；
 static char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
-    // 定义一个配置块看结构，这里的 clcf 看上去像 loc 级别的，
-    //但实际上可以是main 或者 src 或者 loc 级别都行, http{} server{} 内部都有一个 _core_loc_conf_t
     ngx_http_print_loc_conf_t *mycf = conf;
     ngx_str_t *values =cf->args->elts;
     mycf->print = values[1];
-
-    // clcf 就是其所属的配置块
-    // 我的理解：在全部配置中，找到插件所属的配置块（loc/server/http）
 
     ngx_http_core_loc_conf_t *clcf;
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
