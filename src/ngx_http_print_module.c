@@ -55,7 +55,7 @@ static ngx_command_t ngx_http_print_commands[] = {
 };
 
 
-ngx_module_t ngx_http_print_module = {
+ngx_module_t ngx_http_practice_module = {
         NGX_MODULE_V1,
         &ngx_http_print_module_ctx,
         ngx_http_print_commands,
@@ -73,7 +73,7 @@ ngx_module_t ngx_http_print_module = {
 static ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     //这里是做什么？ 读取到配置项吗？
     ngx_http_print_loc_conf_t *config;
-    config = ngx_http_get_module_loc_conf(r, ngx_http_print_module);
+    config = ngx_http_get_module_loc_conf(r, ngx_http_practice_module);
 
 
     /*设置 content-type ,content-type 应该为 ngx_str_t 类型*/
