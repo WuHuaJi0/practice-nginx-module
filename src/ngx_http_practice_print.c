@@ -1,76 +1,8 @@
+#include "ngx_http_practice_module.h"
+#include "ngx_http_practice_print.h"
 
-#include "ngx_http_print_module.h"
-#include <ngx_config.h>
+ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 
-static char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-static ngx_int_t ngx_http_print_handler(ngx_http_request_t *r);
-static void *ngx_create_loc_conf(ngx_conf_t *cf);
-static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
-
-static ngx_http_module_t ngx_http_print_module_ctx = {
-        NULL,/* preconfiguration */
-        NULL,/* postconfiguration */
-        NULL,/* create main configuration */
-        NULL,/* init main configuration */
-        NULL,
-        NULL,/* merge server configuration */
-        ngx_create_loc_conf,
-        ngx_merge_loc_conf,
-};
-
-static void *ngx_create_loc_conf(ngx_conf_t *cf ){
-    ngx_http_print_loc_conf_t *conf;
-
-    conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_print_loc_conf_t));
-    if (conf == NULL) {
-        return NGX_CONF_ERROR;
-    }
-    conf->args.len = 0;
-    conf->args.data = NULL;
-    return conf;
-}
-
-static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
-    ngx_http_print_loc_conf_t *prev = parent;
-    ngx_http_print_loc_conf_t *conf = child;
-
-    if( conf->args.data == NULL ){
-        conf->args.len = prev->args.len;
-        conf->args.data = prev->args.data;
-    }
-    return NGX_CONF_OK;
-}
-
-
-static ngx_command_t ngx_http_print_commands[] = {
-        {
-                ngx_string("print"),
-                NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
-                ngx_http_print,
-                NGX_HTTP_LOC_CONF_OFFSET,
-                0,
-                NULL
-        },
-        ngx_null_command
-};
-
-
-ngx_module_t ngx_http_practice_module = {
-        NGX_MODULE_V1,
-        &ngx_http_print_module_ctx,
-        ngx_http_print_commands,
-        NGX_HTTP_MODULE,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NGX_MODULE_V1_PADDING
-};
-
-static ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     //这里是做什么？ 读取到配置项吗？
     ngx_http_print_loc_conf_t *config;
     config = ngx_http_get_module_loc_conf(r, ngx_http_practice_module);
@@ -105,7 +37,7 @@ static ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 }
 
 //set 函数；
-static char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
     ngx_http_print_loc_conf_t *mycf = conf;
 
     ngx_uint_t args_count = cf->args->nelts; //配置项参数个数，包含指令本身；
