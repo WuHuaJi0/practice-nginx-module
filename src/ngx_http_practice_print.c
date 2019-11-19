@@ -7,10 +7,8 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     ngx_http_print_loc_conf_t *config;
     config = ngx_http_get_module_loc_conf(r, ngx_http_practice_module);
 
-
-    /*设置 content-type ,content-type 应该为 ngx_str_t 类型*/
-    r->headers_out.content_type.len = sizeof("text/plain") - 1;
-    r->headers_out.content_type.data = (u_char *) "text/plain";
+    ngx_str_t content_type = ngx_string("text/plain");
+    r->headers_out.content_type = content_type;
 
     ngx_buf_t *buf; //buf
     ngx_chain_t chain[1]; //初始化一个chain
