@@ -34,4 +34,4 @@ $ hello world nihao shijie;
 
 todo
 ======
-- [] print 可输出变量，如`print $request_uri`;
+- [ ] print 可输出变量，如`print $request_uri`;
