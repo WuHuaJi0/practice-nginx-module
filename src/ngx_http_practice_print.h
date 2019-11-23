@@ -1,10 +1,6 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
-//print 参数结构体
-typedef struct {
-    ngx_str_t args;
-} ngx_http_print_loc_conf_t;
 
 //print 命令的 set函数
 char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);

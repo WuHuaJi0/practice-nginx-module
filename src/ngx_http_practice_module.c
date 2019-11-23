@@ -3,27 +3,28 @@
 //
 #include "ngx_http_practice_module.h"
 #include "ngx_http_practice_print.h"
+//#include "ngx_http_practice_upstrem.h"
 
 
 static void *ngx_create_loc_conf(ngx_conf_t *cf ){
-    ngx_http_print_loc_conf_t *conf;
+    ngx_http_practice_loc_conf_t *conf;
 
-    conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_print_loc_conf_t));
+    conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_practice_loc_conf_t));
     if (conf == NULL) {
         return NGX_CONF_ERROR;
     }
-    conf->args.len = 0;
-    conf->args.data = NULL;
+    conf->print_args.len = 0;
+    conf->print_args.data = NULL;
     return conf;
 }
 
 static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
-    ngx_http_print_loc_conf_t *prev = parent;
-    ngx_http_print_loc_conf_t *conf = child;
+    ngx_http_practice_loc_conf_t *prev = parent;
+    ngx_http_practice_loc_conf_t *conf = child;
 
-    if( conf->args.data == NULL ){
-        conf->args.len = prev->args.len;
-        conf->args.data = prev->args.data;
+    if( conf->print_args.data == NULL ){
+        conf->print_args.len = prev->print_args.len;
+        conf->print_args.data = prev->print_args.data;
     }
     return NGX_CONF_OK;
 }
@@ -32,6 +33,14 @@ static ngx_command_t ngx_http_practice_commands[] = {
     {
         ngx_string("print"),
         NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
+        ngx_http_print,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        0,
+        NULL
+    },
+    {
+        ngx_string("practice_upstrem"),
+        NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
         ngx_http_print,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,

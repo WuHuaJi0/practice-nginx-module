@@ -4,7 +4,7 @@
 ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 
     //这里是做什么？ 读取到配置项吗？
-    ngx_http_print_loc_conf_t *config;
+    ngx_http_practice_loc_conf_t *config;
     config = ngx_http_get_module_loc_conf(r, ngx_http_practice_module);
 
     ngx_str_t content_type = ngx_string("text/plain");
@@ -16,14 +16,14 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     chain[0].buf = buf;
     chain[0].next = NULL;
 
-    buf->pos = config->args.data;
-    buf->last = buf->pos + config->args.len;
+    buf->pos = config->print_args.data;
+    buf->last = buf->pos + config->print_args.len;
 
     buf->memory = 1;
     buf->last_buf = 1;
 
     r->headers_out.status = NGX_HTTP_OK;
-    r->headers_out.content_length_n = config->args.len;
+    r->headers_out.content_length_n = config->print_args.len;
 
     ngx_int_t result_send_header = ngx_http_send_header(r);
     if (result_send_header == NGX_ERROR || result_send_header > NGX_OK || r->header_only) {
@@ -36,14 +36,14 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 
 //set 函数；
 char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
-    ngx_http_print_loc_conf_t *mycf = conf;
+    ngx_http_practice_loc_conf_t *mycf = conf;
 
     ngx_uint_t args_count = cf->args->nelts; //配置项参数个数，包含指令本身；
     ngx_str_t *values = cf->args->elts;
 
     if( args_count == 1  ){ // 如果没有参数
         ngx_str_t string = ngx_string("print without args");
-        mycf->args = string;
+        mycf->print_args = string;
     }else{
         int size_args = 0;
         for (int i = 1; i < args_count; ++i) {
@@ -57,8 +57,8 @@ char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
             des = ngx_cpystrn(des ,values[i].data, values[i].len + 1); //todo:非常奇怪，这里需要len+1才能完整复制成功
             des = ngx_cpystrn(des ," ", 2);
         }
-        mycf->args.data = string;
-        mycf->args.len = size_args;
+        mycf->print_args.data = string;
+        mycf->print_args.len = size_args;
     }
 
 
