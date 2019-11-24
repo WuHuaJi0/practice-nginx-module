@@ -18,33 +18,33 @@ static void *ngx_create_loc_conf(ngx_conf_t *cf ){
 
     //先临时硬编码 practice_upstream 的配置；
     //超时设置
-    conf->upstream_conf.connect_timeout = 60000;
-    conf->upstream_conf.read_timeout = 60000;
-    conf->upstream_conf.send_timeout = 60000;
-    conf->upstream_conf.store_timeout = 60000;
+    conf->upstream_conf.connect_timeout = 6000;
+    conf->upstream_conf.read_timeout = 6000;
+    conf->upstream_conf.send_timeout = 6000;
+    conf->upstream_conf.store_access = 0600;
     conf->upstream_conf.buffering = 0;
     conf->upstream_conf.bufs.num = 8;
     conf->upstream_conf.bufs.size = ngx_pagesize;
     conf->upstream_conf.buffer_size = ngx_pagesize;
-    conf->upstream_conf.busy_buffer_size = 2 * ngx_pagesize;
+    conf->upstream_conf.busy_buffers_size = 2 * ngx_pagesize;
     conf->upstream_conf.temp_file_write_size = 2 * ngx_pagesize;
     conf->upstream_conf.max_temp_file_size = 1024 * 1024 * 1024;
-    conf->upstream_conf.hide_headers = NGX_CONF_USET_PTR;
-    conf->upstream_conf.pass_headers = NGX_CONF_USET_PTR;
+    conf->upstream_conf.hide_headers = NGX_CONF_UNSET_PTR;
+    conf->upstream_conf.pass_headers = NGX_CONF_UNSET_PTR;
 
     return conf;
 }
 
 static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
-    ngx_http_practice_loc_conf_t *prev = parent;
-    ngx_http_practice_loc_conf_t *conf = child;
-
-    if( conf->print_args.data == NULL ){
-        conf->print_args.len = prev->print_args.len;
-        conf->print_args.data = prev->print_args.data;
-    }
-
-    return NGX_CONF_OK;
+//    ngx_http_practice_loc_conf_t *prev = parent;
+//    ngx_http_practice_loc_conf_t *conf = child;
+//
+//    if( conf->print_args.data == NULL ){
+//        conf->print_args.len = prev->print_args.len;
+//        conf->print_args.data = prev->print_args.data;
+//    }
+//
+//    return NGX_CONF_OK;
 }
 
 static ngx_command_t ngx_http_practice_commands[] = {

@@ -4,7 +4,6 @@
 #include <ngx_core.h>
 #include <ngx_config.h>
 #include <ngx_http.h>
-//#include <ngx_http_upstream.h>
 
 extern ngx_module_t  ngx_http_practice_module;
 
@@ -17,6 +16,7 @@ typedef struct {
 //请求上下文
 typedef struct {
    ngx_http_status_t status;
+    ngx_str_t backendServer;
 } ngx_http_practice_ctx_t;
 
 static void *ngx_create_loc_conf(ngx_conf_t *cf);
