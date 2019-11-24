@@ -6,6 +6,20 @@
 #include "ngx_http_practice_upstream.h"
 
 
+static ngx_str_t  ngx_http_proxy_hide_headers[] =
+{
+        ngx_string("Date"),
+        ngx_string("Server"),
+        ngx_string("X-Pad"),
+        ngx_string("X-Accel-Expires"),
+        ngx_string("X-Accel-Redirect"),
+        ngx_string("X-Accel-Limit-Rate"),
+        ngx_string("X-Accel-Buffering"),
+        ngx_string("X-Accel-Charset"),
+        ngx_null_string
+};
+
+
 static void *ngx_create_loc_conf(ngx_conf_t *cf ){
     ngx_http_practice_loc_conf_t *conf;
 
@@ -36,15 +50,21 @@ static void *ngx_create_loc_conf(ngx_conf_t *cf ){
 }
 
 static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
-//    ngx_http_practice_loc_conf_t *prev = parent;
-//    ngx_http_practice_loc_conf_t *conf = child;
-//
-//    if( conf->print_args.data == NULL ){
-//        conf->print_args.len = prev->print_args.len;
-//        conf->print_args.data = prev->print_args.data;
-//    }
-//
-//    return NGX_CONF_OK;
+    ngx_http_practice_loc_conf_t *prev = (ngx_http_practice_loc_conf_t *)parent;
+    ngx_http_practice_loc_conf_t *conf = (ngx_http_practice_loc_conf_t *)child;
+
+    ngx_hash_init_t             hash;
+    hash.max_size = 100;
+    hash.bucket_size = 1024;
+    hash.name = "proxy_headers_hash";
+    if (ngx_http_upstream_hide_headers_hash(cf, &conf->upstream_conf,
+                                            &prev->upstream_conf, ngx_http_proxy_hide_headers, &hash)
+        != NGX_OK)
+    {
+        return NGX_CONF_ERROR;
+    }
+
+    return NGX_CONF_OK;
 }
 
 static ngx_command_t ngx_http_practice_commands[] = {
