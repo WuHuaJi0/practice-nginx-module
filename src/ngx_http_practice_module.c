@@ -79,7 +79,7 @@ static ngx_command_t ngx_http_practice_commands[] = {
     {
         ngx_string("practice_upstream"),
         NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
-        ngx_http_practice_upstream,
+        ngx_http_upstream,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
         NULL

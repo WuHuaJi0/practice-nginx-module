@@ -3,11 +3,11 @@
 //
 
 //upstream 命令的 set函数
-char *ngx_http_practice_upstream(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+char *ngx_http_upstream(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 
 // upstream 的 handler
-ngx_int_t ngx_http_practice_upstream_handler(ngx_http_request_t *r);
+ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r);
 
 
 // upstream 的 create_request 方法；
