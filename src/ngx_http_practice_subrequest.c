@@ -10,10 +10,10 @@ char *ngx_http_sub(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
     return NGX_CONF_OK;
 }
 
-static ngx_int_t subrequst_post_handler(ngx_http_request_t *r, void *data, ngx_int_t rc) {
+ngx_int_t subrequst_post_handler(ngx_http_request_t *r, void *data, ngx_int_t rc) {
     ngx_http_request_t *pr = r->parent; //找到父请求；
     /*设置上下文*/
-    ngx_http_sub_ctx_t * myctx = ngx_http_get_module_ctx(r, ngx_http_practice_module);
+    ngx_http_sub_ctx_t * myctx = ngx_http_get_module_ctx(pr, ngx_http_practice_module);
 
     pr->headers_out.status = r->headers_out.status;
 
@@ -27,7 +27,7 @@ static ngx_int_t subrequst_post_handler(ngx_http_request_t *r, void *data, ngx_i
 }
 
 //父请求的回调
-static void sub_post_handler(ngx_http_request_t *r){
+void sub_post_handler(ngx_http_request_t *r){
     if( r->headers_out.status != NGX_HTTP_OK ){
         ngx_http_finalize_request(r,r->headers_out.status);
         return ;
@@ -35,9 +35,7 @@ static void sub_post_handler(ngx_http_request_t *r){
 
     /*设置上下文*/
     ngx_http_sub_ctx_t * myctx = ngx_http_get_module_ctx(r, ngx_http_practice_module);
-
-    ngx_str_t output = myctx->res;
-
+    
     r->headers_out.content_length_n = myctx->res.len;
     ngx_buf_t *b = ngx_create_temp_buf(r->pool,myctx->res.len);
 

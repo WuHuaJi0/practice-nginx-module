@@ -21,7 +21,7 @@ static ngx_str_t  ngx_http_proxy_hide_headers[] =
 };
 
 
-static void *ngx_create_loc_conf(ngx_conf_t *cf ){
+void *ngx_create_loc_conf(ngx_conf_t *cf ){
     ngx_http_practice_loc_conf_t *conf;
 
     conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_practice_loc_conf_t));
@@ -50,7 +50,7 @@ static void *ngx_create_loc_conf(ngx_conf_t *cf ){
     return conf;
 }
 
-static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
+char* ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
     ngx_http_practice_loc_conf_t *prev = (ngx_http_practice_loc_conf_t *)parent;
     ngx_http_practice_loc_conf_t *conf = (ngx_http_practice_loc_conf_t *)child;
 

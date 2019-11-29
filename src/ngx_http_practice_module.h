@@ -19,6 +19,6 @@ typedef struct {
     ngx_str_t backendServer;
 } ngx_http_practice_ctx_t;
 
-static void *ngx_create_loc_conf(ngx_conf_t *cf);
-static void *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
+void *ngx_create_loc_conf(ngx_conf_t *cf);
+char *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 

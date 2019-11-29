@@ -38,7 +38,7 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
     ngx_http_practice_loc_conf_t *mycf = conf;
 
-    ngx_uint_t args_count = cf->args->nelts; //配置项参数个数，包含指令本身；
+    ngx_int_t args_count = cf->args->nelts; //配置项参数个数，包含指令本身；
     ngx_str_t *values = cf->args->elts;
 
     if( args_count == 1  ){ // 如果没有参数
@@ -46,16 +46,17 @@ char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
         mycf->print_args = string;
     }else{
         int size_args = 0;
-        for (int i = 1; i < args_count; ++i) {
+        for (ngx_int_t i = 1; i < args_count; ++i) {
             size_args += values[i].len;
         }
         size_args += args_count - 1; //留出空间给空格使用；
         u_char *string = ngx_pcalloc(cf->pool, size_args);
 
         u_char *des = string;
-        for (int i = 1; i < args_count; ++i) {
+        for (ngx_int_t i = 1; i < args_count; ++i) {
             des = ngx_cpystrn(des ,values[i].data, values[i].len + 1); //todo:非常奇怪，这里需要len+1才能完整复制成功
-            des = ngx_cpystrn(des ," ", 2);
+            u_char space = ' ';
+            des = ngx_cpystrn(des ,&space, 2);
         }
         mycf->print_args.data = string;
         mycf->print_args.len = size_args;

@@ -66,10 +66,8 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
     u->resolved->naddrs = 1;
 
     u->create_request = practice_upstream_create_request;
-    u->reinit_request = practice_upstream_reinit_request;
     u->process_header = practice_process_status_line;
     u->finalize_request = practice_upstream_finialize_request;
-    u->abort_request = practice_upstream_abort_request;
 
     r->main->count++; //确保请求不会被销毁；
     ngx_http_upstream_init(r);
@@ -77,7 +75,7 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
 }
 
 // upstream 的 create_request 方法；
-static ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) {
+ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) {
 
     //模拟请求
     static ngx_str_t backendQueryLine =
@@ -112,16 +110,10 @@ static ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) {
     return NGX_OK;
 }
 
-static ngx_int_t practice_upstream_reinit_request(ngx_http_request_t *r) {
-    printf("重试了\n");
-}
 
-static ngx_int_t practice_upstream_abort_request(ngx_http_request_t *r) {
-    printf("abort\n");
-}
 
 //解析响应行
-static ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
+ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
 
     size_t len;
     ngx_int_t rc;
@@ -188,7 +180,7 @@ static ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
     return practice_upstream_process_header(r);
 }
 
-static ngx_int_t practice_upstream_process_header(ngx_http_request_t *r) {
+ngx_int_t practice_upstream_process_header(ngx_http_request_t *r) {
 
     ngx_int_t rc;
     ngx_table_elt_t *h;
@@ -299,6 +291,6 @@ static ngx_int_t practice_upstream_process_header(ngx_http_request_t *r) {
     }
 }
 
-static void practice_upstream_finialize_request(ngx_http_request_t *r, ngx_int_t rc) {
+void practice_upstream_finialize_request(ngx_http_request_t *r, ngx_int_t rc) {
     ngx_log_error(NGX_LOG_DEBUG, r->connection->log, 0, "upstream finalize request");
 }

@@ -11,20 +11,20 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r);
 
 
 // upstream 的 create_request 方法；
-static ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) ;
+ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) ;
 
 
 //upstrem 的 reinit_request;
-static ngx_int_t practice_upstream_reinit_request(ngx_http_request_t *r);
+ngx_int_t practice_upstream_reinit_request(ngx_http_request_t *r);
 
 // abort
-static ngx_int_t practice_upstream_abort_request(ngx_http_request_t *r);
+void* practice_upstream_abort_request(ngx_http_request_t *r);
 
 //解析响应行
-static ngx_int_t practice_process_status_line(ngx_http_request_t *r) ;
+ngx_int_t practice_process_status_line(ngx_http_request_t *r) ;
 
 
-static ngx_int_t practice_upstream_process_header(ngx_http_request_t *r);
+ngx_int_t practice_upstream_process_header(ngx_http_request_t *r);
 
 
-static void practice_upstream_finialize_request(ngx_http_request_t *r,ngx_int_t rc);
+void practice_upstream_finialize_request(ngx_http_request_t *r,ngx_int_t rc);
