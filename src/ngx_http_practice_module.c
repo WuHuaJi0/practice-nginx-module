@@ -4,6 +4,7 @@
 #include "ngx_http_practice_module.h"
 #include "ngx_http_practice_print.h"
 #include "ngx_http_practice_upstream.h"
+#include "ngx_http_practice_subrequest.h"
 
 
 static ngx_str_t  ngx_http_proxy_hide_headers[] =
@@ -80,6 +81,14 @@ static ngx_command_t ngx_http_practice_commands[] = {
         ngx_string("practice_upstream"),
         NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
         ngx_http_upstream,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        0,
+        NULL
+    },
+    {
+        ngx_string("sub"),
+        NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
+        ngx_http_sub,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
         NULL

@@ -5,12 +5,14 @@ PRACTICE_SRCS="                                                            \
         $ngx_addon_dir/src/ngx_http_practice_module.c                      \
         $ngx_addon_dir/src/ngx_http_practice_print.c                       \
         $ngx_addon_dir/src/ngx_http_practice_upstream.c                       \
+        $ngx_addon_dir/src/ngx_http_practice_subrequest.c                       \
         "
 
 PRACTICE_DEPS="                                                            \
         $ngx_addon_dir/src/ngx_http_practice_module.h                      \
         $ngx_addon_dir/src/ngx_http_practice_print.h                       \
         $ngx_addon_dir/src/ngx_http_practice_upstream.h                       \
+        $ngx_addon_dir/src/ngx_http_practice_subrequest.h                       \
         "
 
 NGX_ADDON_SRCS="$NGX_ADDON_SRCS $PRACTICE_SRCS"
