@@ -3,7 +3,6 @@
 
 ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 
-    //这里是做什么？ 读取到配置项吗？
     ngx_http_practice_loc_conf_t *config;
     config = ngx_http_get_module_loc_conf(r, ngx_http_practice_module);
 
@@ -11,10 +10,10 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     r->headers_out.content_type = content_type;
 
     ngx_buf_t *buf; //buf
-    ngx_chain_t chain[1]; //初始化一个chain
+    ngx_chain_t chain; //初始化一个chain
     buf = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
-    chain[0].buf = buf;
-    chain[0].next = NULL;
+    chain.buf = buf;
+    chain.next = NULL;
 
     buf->pos = config->print_args.data;
     buf->last = buf->pos + config->print_args.len;
@@ -30,7 +29,7 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
         return result_send_header;
     }
 
-    int result = ngx_http_output_filter(r, &chain[0]);
+    int result = ngx_http_output_filter(r, &chain);
     return result;
 }
 
