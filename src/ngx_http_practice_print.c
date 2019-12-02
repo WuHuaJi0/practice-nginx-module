@@ -9,9 +9,8 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     ngx_str_t content_type = ngx_string("text/plain");
     r->headers_out.content_type = content_type;
 
-    ngx_buf_t *buf; //buf
+    ngx_buf_t *buf = ngx_alloc_buf(r->pool); //初始化buf
     ngx_chain_t chain; //初始化一个chain
-    buf = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
     chain.buf = buf;
     chain.next = NULL;
 
