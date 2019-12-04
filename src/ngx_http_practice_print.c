@@ -4,13 +4,16 @@
 ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 
     ngx_http_practice_loc_conf_t *config;
+    ngx_int_t rc;
+    ngx_buf_t *buf;
+    ngx_chain_t chain;
+    ngx_str_t content_type = ngx_string("text/plain");
+
     config = ngx_http_get_module_loc_conf(r, ngx_http_practice_module);
 
-    ngx_str_t content_type = ngx_string("text/plain");
     r->headers_out.content_type = content_type;
 
-    ngx_buf_t *buf = ngx_alloc_buf(r->pool); //初始化buf
-    ngx_chain_t chain; //初始化一个chain
+    buf = ngx_alloc_buf(r->pool); //初始化buf
     chain.buf = buf;
     chain.next = NULL;
 
@@ -23,13 +26,12 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = config->print_args.len;
 
-    ngx_int_t result_send_header = ngx_http_send_header(r);
-    if (result_send_header == NGX_ERROR || result_send_header > NGX_OK || r->header_only) {
-        return result_send_header;
+    rc = ngx_http_send_header(r);
+    if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
+        return rc;
     }
 
-    int result = ngx_http_output_filter(r, &chain);
-    return result;
+    return ngx_http_output_filter(r, &chain);
 }
 
 //set 函数；
