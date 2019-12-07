@@ -37,6 +37,7 @@ ngx_int_t ngx_http_print_handler(ngx_http_request_t *r) {
 //set 函数；
 char *ngx_http_print(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
     ngx_http_practice_loc_conf_t *mycf = conf;
+    mycf->type = practice_print;
 
     ngx_int_t args_count = cf->args->nelts; //配置项参数个数，包含指令本身；
     ngx_str_t *values = cf->args->elts;

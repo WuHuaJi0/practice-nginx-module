@@ -1,9 +1,10 @@
 ngx_addon_name=ngx_http_practice_module
-HTTP_MODULES="$HTTP_MODULES ngx_http_practice_module"
+HTTP_AUX_FILTER_MODULES="$HTTP_AUX_FILTER_MODULES ngx_http_practice_module"
 
 PRACTICE_SRCS="                                                            \
         $ngx_addon_dir/src/ngx_http_practice_module.c                      \
         $ngx_addon_dir/src/ngx_http_practice_print.c                       \
+        $ngx_addon_dir/src/ngx_http_practice_filter.c                       \
         $ngx_addon_dir/src/ngx_http_practice_upstream.c                       \
         $ngx_addon_dir/src/ngx_http_practice_subrequest.c                       \
         "
@@ -11,6 +12,7 @@ PRACTICE_SRCS="                                                            \
 PRACTICE_DEPS="                                                            \
         $ngx_addon_dir/src/ngx_http_practice_module.h                      \
         $ngx_addon_dir/src/ngx_http_practice_print.h                       \
+        $ngx_addon_dir/src/ngx_http_practice_filter.h                       \
         $ngx_addon_dir/src/ngx_http_practice_upstream.h                       \
         $ngx_addon_dir/src/ngx_http_practice_subrequest.h                       \
         "
