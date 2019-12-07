@@ -82,7 +82,7 @@ static ngx_command_t ngx_http_practice_commands[] = {
         NULL
     },
     {
-        ngx_string("sign"), //向响应头和响应体添加内容（sign）
+        ngx_string("add_content"), //向响应头和响应体添加内容（sign）
         NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
         ngx_http_filter,
         NGX_HTTP_LOC_CONF_OFFSET,

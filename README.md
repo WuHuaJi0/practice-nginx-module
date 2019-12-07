@@ -12,6 +12,7 @@ practice-nginx-module
 目录
 =================
 * [print](#print)
+* [add_content(练习filter)](#add_content)
 * [todo](#todo)
 
 
@@ -31,6 +32,25 @@ curl http://localhost/print
 $ hello world nihao shijie;
 ```
 
+
+add_content
+======
+可用`add_content`指令在响应体前添加一段：`[content add by filter]`，主要练习 nginx http 过滤器。
+指令：`add_content on|off`;
+
+```
+location /print{
+    print hello world;
+    add_content on;
+}
+```
+
+响应：
+```
+$ curl http://localhost/print 
+[content add by filter]
+hello world  
+```
 
 todo
 ======
