@@ -79,7 +79,7 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
 ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) {
 
     //模拟请求
-    static ngx_str_t backendQueryLine = ngx_string("GET /print\r\nHost: localhost\r\nConnection: close\r\naccept: */*\r\n");
+    static ngx_str_t backendQueryLine = ngx_string("GET /print HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\naccept: */*\r\n\r\n");
 
     ngx_buf_t *b = ngx_create_temp_buf(r->pool, backendQueryLine.len);  //初始化一个buf , 这里的buf存放要发给上游的请求
     if (b == NULL){
@@ -125,10 +125,10 @@ ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
     u = r->upstream;
 
     //http框架提供的ngx_http_parse_status_line方法可以解析http
-//响应行，它的输入就是收到的字符流和上下文中的ngx_http_status_t结构
+    //响应行，它的输入就是收到的字符流和上下文中的ngx_http_status_t结构
     rc = ngx_http_parse_status_line(r, &u->buffer, &ctx->status);
     //返回NGX_AGAIN表示还没有解析出完整的http响应行，需要接收更多的
-//字符流再来解析
+    //字符流再来解析
     if (rc == NGX_AGAIN) {
         return rc;
     }
@@ -142,13 +142,13 @@ ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
     }
 
     //以下表示解析到完整的http响应行，这时会做一些简单的赋值操作，将解析出
-//的信息设置到r->upstream->headers_in结构体中，upstream解析完所
-//有的包头时，就会把headers_in中的成员设置到将要向下游发送的
-//r->headers_out结构体中，也就是说，现在我们向headers_in中设置的
-//信息，最终都会发往下游客户端。为什么不是直接设置r->headers_out而要
-//这样多此一举呢？这是因为upstream希望能够按照
-//ngx_http_upstream_conf_t配置结构体中的hide_headers等成员对
-//发往下游的响应头部做统一处理
+    //的信息设置到r->upstream->headers_in结构体中，upstream解析完所
+    //有的包头时，就会把headers_in中的成员设置到将要向下游发送的
+    //r->headers_out结构体中，也就是说，现在我们向headers_in中设置的
+    //信息，最终都会发往下游客户端。为什么不是直接设置r->headers_out而要
+    //这样多此一举呢？这是因为upstream希望能够按照
+    //ngx_http_upstream_conf_t配置结构体中的hide_headers等成员对
+    //发往下游的响应头部做统一处理
     if (u->state) {
         u->state->status = ctx->status.code;
     }
@@ -166,12 +166,12 @@ ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
     ngx_memcpy(u->headers_in.status_line.data, ctx->status.start, len);
 
     //下一步将开始解析http头部，设置process_header回调方法为
-//mytest_upstream_process_header，
-//之后再收到的新字符流将由mytest_upstream_process_header解析
+    //mytest_upstream_process_header，
+    //之后再收到的新字符流将由mytest_upstream_process_header解析
     u->process_header = practice_upstream_process_header;
 
     //如果本次收到的字符流除了http响应行外，还有多余的字符，
-//将由mytest_upstream_process_header方法解析
+    //将由mytest_upstream_process_header方法解析
     return practice_upstream_process_header(r);
 }
 
@@ -183,8 +183,8 @@ ngx_int_t practice_upstream_process_header(ngx_http_request_t *r) {
     ngx_http_upstream_main_conf_t *umcf;
 
     //这里将upstream模块配置项ngx_http_upstream_main_conf_t取了
-//出来，目的只有1个，对将要转发给下游客户端的http响应头部作统一
-//处理。该结构体中存储了需要做统一处理的http头部名称和回调方法
+    //出来，目的只有1个，对将要转发给下游客户端的http响应头部作统一
+    //处理。该结构体中存储了需要做统一处理的http头部名称和回调方法
     umcf = ngx_http_get_module_main_conf(r, ngx_http_upstream_module);
 
     //循环的解析所有的http头部
