@@ -4,23 +4,23 @@
 #include "ngx_http_practice_module.h"
 #include "ngx_http_practice_print.h"
 #include "ngx_http_practice_filter.h"
-//#include "ngx_http_practice_upstream.h"
+#include "ngx_http_practice_upstream.h"
 //#include "ngx_http_practice_subrequest.h"
 
 
-//static ngx_str_t  ngx_http_proxy_hide_headers[] =
-//{
-//        ngx_string("Date"),
-//        ngx_string("Server"),
-//        ngx_string("X-Pad"),
-//        ngx_string("X-Accel-Expires"),
-//        ngx_string("X-Accel-Redirect"),
-//        ngx_string("X-Accel-Limit-Rate"),
-//        ngx_string("X-Accel-Buffering"),
-//        ngx_string("X-Accel-Charset"),
-//        ngx_null_string
-//};
-
+// hide_headers;
+ngx_str_t  ngx_http_proxy_hide_headers[] =
+{
+    ngx_string("Date"),
+    ngx_string("Server"),
+    ngx_string("X-Pad"),
+    ngx_string("X-Accel-Expires"),
+    ngx_string("X-Accel-Redirect"),
+    ngx_string("X-Accel-Limit-Rate"),
+    ngx_string("X-Accel-Buffering"),
+    ngx_string("X-Accel-Charset"),
+    ngx_null_string
+};
 
 void *ngx_create_loc_conf(ngx_conf_t *cf ){
     ngx_http_practice_loc_conf_t *conf;
@@ -34,40 +34,37 @@ void *ngx_create_loc_conf(ngx_conf_t *cf ){
     conf->print_args.len = 0;
     conf->print_args.data = NULL;
 
-    //先临时硬编码 practice_upstream 的配置；
-    //超时设置
-//    conf->upstream_conf.connect_timeout = 6000;
-//    conf->upstream_conf.read_timeout = 6000;
-//    conf->upstream_conf.send_timeout = 6000;
-//    conf->upstream_conf.store_access = 0600;
-//    conf->upstream_conf.buffering = 0;
-//    conf->upstream_conf.bufs.num = 8;
-//    conf->upstream_conf.bufs.size = ngx_pagesize;
-//    conf->upstream_conf.buffer_size = ngx_pagesize;
-//    conf->upstream_conf.busy_buffers_size = 2 * ngx_pagesize;
-//    conf->upstream_conf.temp_file_write_size = 2 * ngx_pagesize;
-//    conf->upstream_conf.max_temp_file_size = 1024 * 1024 * 1024;
-//    conf->upstream_conf.hide_headers = NGX_CONF_UNSET_PTR;
-//    conf->upstream_conf.pass_headers = NGX_CONF_UNSET_PTR;
+    //硬编码 practice_upstream 的配置；
+    conf->upstream_conf.connect_timeout = 6000;
+    conf->upstream_conf.read_timeout = 6000;
+    conf->upstream_conf.send_timeout = 6000;
+    conf->upstream_conf.store_access = 0600;
+    conf->upstream_conf.buffering = 0;
+    conf->upstream_conf.bufs.num = 8;
+    conf->upstream_conf.bufs.size = ngx_pagesize;
+    conf->upstream_conf.buffer_size = ngx_pagesize;
+    conf->upstream_conf.busy_buffers_size = 2 * ngx_pagesize;
+    conf->upstream_conf.temp_file_write_size = 2 * ngx_pagesize;
+    conf->upstream_conf.max_temp_file_size = 1024 * 1024 * 1024;
+    conf->upstream_conf.hide_headers = NGX_CONF_UNSET_PTR;
+    conf->upstream_conf.pass_headers = NGX_CONF_UNSET_PTR;
 
 
     return conf;
 }
 
 char* ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
-//    ngx_http_practice_loc_conf_t *prev = (ngx_http_practice_loc_conf_t *)parent;
-//    ngx_http_practice_loc_conf_t *conf = (ngx_http_practice_loc_conf_t *)child;
+    ngx_http_practice_loc_conf_t *prev = (ngx_http_practice_loc_conf_t *)parent;
+    ngx_http_practice_loc_conf_t *conf = (ngx_http_practice_loc_conf_t *)child;
 
-//    ngx_hash_init_t             hash;
-//    hash.max_size = 100;
-//    hash.bucket_size = 1024;
-//    hash.name = "proxy_headers_hash";
-//    if (ngx_http_upstream_hide_headers_hash(cf, &conf->upstream_conf,
-//                                            &prev->upstream_conf, ngx_http_proxy_hide_headers, &hash)
-//        != NGX_OK)
-//    {
-//        return NGX_CONF_ERROR;
-//    }
+    ngx_hash_init_t hash;
+    hash.max_size = 100;
+    hash.bucket_size = 1024;
+    hash.name = "proxy_headers_hash";
+    if (ngx_http_upstream_hide_headers_hash(cf, &conf->upstream_conf, &prev->upstream_conf, ngx_http_proxy_hide_headers, &hash) != NGX_OK)
+    {
+        return NGX_CONF_ERROR;
+    }
 
     return NGX_CONF_OK;
 }
@@ -90,12 +87,12 @@ static ngx_command_t ngx_http_practice_commands[] = {
         NULL
     },
     {
-//        ngx_string("practice_upstream"),
-//        NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
-//        ngx_http_upstream,
-//        NGX_HTTP_LOC_CONF_OFFSET,
-//        0,
-//        NULL
+        ngx_string("practice_upstream"),
+        NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
+        ngx_http_upstream,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        0,
+        NULL
     },
     {
 //        ngx_string("sub"),

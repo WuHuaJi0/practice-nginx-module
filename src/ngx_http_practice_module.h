@@ -5,9 +5,9 @@
 #include <ngx_config.h>
 #include <ngx_http.h>
 
-extern ngx_module_t  ngx_http_practice_module;
+extern ngx_module_t ngx_http_practice_module;
 
-typedef enum{
+typedef enum {
     practice_print = 0,
     practice_filter,
     practice_upstream,
@@ -24,15 +24,16 @@ typedef struct {
 
 
 typedef struct {
-   ngx_flag_t enable;
+    ngx_flag_t enable;
 } ngx_http_practice_tmp_conf_t;
 
 //请求上下文
 typedef struct {
-   ngx_http_status_t status;
+    ngx_http_status_t status;
     ngx_str_t backendServer;
 } ngx_http_practice_ctx_t;
 
 void *ngx_create_loc_conf(ngx_conf_t *cf);
+
 char *ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 

@@ -32,13 +32,13 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
         return NGX_ERROR;
     }
 
+    // 添加 upstream 配置
     ngx_http_practice_loc_conf_t *mycf = ngx_http_get_module_loc_conf(r, ngx_http_practice_module); //读取到模块配置
-
     ngx_http_upstream_t *u = r->upstream;
     u->conf = &mycf->upstream_conf; //设置upstrem配置
     u->buffering = mycf->upstream_conf.buffering;
 
-    //resolved: 设置上游服务器
+    //设置上游服务器
     u->resolved = (ngx_http_upstream_resolved_t *) ngx_pcalloc(r->pool, sizeof(ngx_http_upstream_resolved_t));
     if (u->resolved == NULL) {
         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "ngx_pcalloc resolved error");
@@ -46,7 +46,7 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
     }
 
     static struct sockaddr_in backendSockAddr;
-    struct hostent *pHost = gethostbyname((char *) "www.baidu.com");
+    struct hostent *pHost = gethostbyname((char *) "localhost");
     if (pHost == NULL) {
         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "gethostbyname failed");
         return NGX_ERROR;
@@ -63,6 +63,7 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
 
     u->resolved->sockaddr = (struct sockaddr *) &backendSockAddr;
     u->resolved->socklen = sizeof(struct sockaddr_in);
+    u->resolved->port = 80;
     u->resolved->naddrs = 1;
 
     u->create_request = practice_upstream_create_request;
@@ -78,21 +79,16 @@ ngx_int_t ngx_http_upstream_handler(ngx_http_request_t *r) {
 ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) {
 
     //模拟请求
-    static ngx_str_t backendQueryLine =
-            ngx_string("GET /s?wd=%V HTTP/1.1\r\nHost: www.baidu.com\r\nConnection: close\r\n"
-                       "accept: */*\r\n"
-                       "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36\r\n\r\n");
+    static ngx_str_t backendQueryLine = ngx_string("GET /print\r\nHost: localhost\r\nConnection: close\r\naccept: */*\r\n");
 
-    ngx_int_t queryLineLen = backendQueryLine.len + r->args.len - 2; //todo: 这里为什么要 -2 ？
-
-    ngx_buf_t *b = ngx_create_temp_buf(r->pool, queryLineLen);  //初始化一个buf , 这里的buf存放要发给上游的请求
-    if (b == NULL)
+    ngx_buf_t *b = ngx_create_temp_buf(r->pool, backendQueryLine.len);  //初始化一个buf , 这里的buf存放要发给上游的请求
+    if (b == NULL){
         return NGX_ERROR;
-    //last要指向请求的末尾
-    b->last = b->pos + queryLineLen; // todo: b->pos 指向哪里呢？
+    }
 
+    b->last = b->pos + backendQueryLine.len; // 疑问: b->pos 指向 backendQuery.data ?
 
-    ngx_snprintf(b->pos, queryLineLen, (char *) backendQueryLine.data, &r->args); //带入参数，把 %V 替换为要查询的参数
+    ngx_snprintf(b->pos, backendQueryLine.len, (char *) backendQueryLine.data, &r->args); //带入参数，把 %V 替换为要查询的参数
 
 
     r->upstream->request_bufs = ngx_alloc_chain_link(r->pool); //初始化 request_bufs ，它是一个 ngx_chain_t ;
@@ -107,6 +103,7 @@ ngx_int_t practice_upstream_create_request(ngx_http_request_t *r) {
     r->upstream->header_sent = 0;
     // header_hash不可以为0
     r->header_hash = 1;
+    printf("create request\n");
     return NGX_OK;
 }
 
@@ -137,9 +134,7 @@ ngx_int_t practice_process_status_line(ngx_http_request_t *r) {
     }
     //返回NGX_ERROR则没有接收到合法的http响应行
     if (rc == NGX_ERROR) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                      "upstream sent no valid HTTP/1.0 header");
-
+        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "upstream sent no valid HTTP/1.0 header");
         r->http_version = NGX_HTTP_VERSION_9;
         u->state->status = NGX_HTTP_OK;
 
@@ -265,9 +260,7 @@ ngx_int_t practice_upstream_process_header(ngx_http_request_t *r) {
                 if (h == NULL) {
                     return NGX_ERROR;
                 }
-
                 h->hash = ngx_hash(ngx_hash(ngx_hash('d', 'a'), 't'), 'e');
-
                 ngx_str_set(&h->key, "Date");
                 ngx_str_null(&h->value);
                 h->lowcase_key = (u_char *) "date";
@@ -277,8 +270,8 @@ ngx_int_t practice_upstream_process_header(ngx_http_request_t *r) {
         }
 
         //如果返回NGX_AGAIN则表示状态机还没有解析到完整的http头部，
-//要求upstream模块继续接收新的字符流再交由process_header
-//回调方法解析
+        //要求upstream模块继续接收新的字符流再交由process_header
+        //回调方法解析
         if (rc == NGX_AGAIN) {
             return NGX_AGAIN;
         }
