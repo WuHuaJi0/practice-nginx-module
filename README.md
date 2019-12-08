@@ -11,8 +11,9 @@ practice-nginx-module
 
 目录
 =================
-* [print](#print)
-* [add_content(练习filter)](#add_content)
+* [print (练习基本模块的编写)](#print)
+* [add_content (练习filter)](#add_content)
+* [practice_upstream (练习upstream)](#practice_upstream)
 * [todo](#todo)
 
 
@@ -50,6 +51,26 @@ location /print{
 $ curl http://localhost/print 
 [content add by filter]
 hello world  
+```
+
+practice_upstream
+======
+可用`practice_upstream` 指令调用 Nginx upstream 功能访问上游服务器。这里硬编码游服务器为 localhost/print
+示例：
+```
+location /print{
+    print hello world;
+}
+
+location /practice_upstream{
+   practice_upstream;
+}
+```
+
+响应：
+```
+$ curl http://localhost/practice_upstream
+hello world %  
 ```
 
 todo
