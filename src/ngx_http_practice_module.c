@@ -72,7 +72,7 @@ char* ngx_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child){
 static ngx_command_t ngx_http_practice_commands[] = {
     {
         ngx_string("print"),
-        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
+        NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
         ngx_http_print,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
@@ -80,7 +80,7 @@ static ngx_command_t ngx_http_practice_commands[] = {
     },
     {
         ngx_string("add_content"), //向响应头和响应体添加内容（sign）
-        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
+        NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
         ngx_http_filter,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,
@@ -88,7 +88,7 @@ static ngx_command_t ngx_http_practice_commands[] = {
     },
     {
         ngx_string("practice_upstream"),
-        NGX_HTTP_LOC_CONF | NGX_CONF_ANY,
+        NGX_HTTP_LOC_CONF | NGX_CONF_NOARGS,
         ngx_http_upstream,
         NGX_HTTP_LOC_CONF_OFFSET,
         0,

@@ -70,7 +70,7 @@ location /practice_upstream{
 响应：
 ```
 $ curl http://localhost/practice_upstream
-hello world %  
+hello world  
 ```
 
 todo
